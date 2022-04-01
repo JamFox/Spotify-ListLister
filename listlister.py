@@ -68,7 +68,7 @@ async def get_all_playlists(user):
     return await user.get_all_playlists()
 
 
-def main():
+async def main():
     args = parse_arguments()
 
     if not exists(args.cfg):
