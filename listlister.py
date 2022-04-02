@@ -31,6 +31,12 @@ def parse_arguments():
         required=True,
     )
     optional.add_argument(
+        "-t",
+        "--tracks",
+        action="store_true",
+        help="Also list tracks inside the playlists.",
+    )
+    optional.add_argument(
         "-c",
         "--cfg",
         default="listlister.conf",
@@ -58,16 +64,6 @@ def parse_arguments():
     return parser.parse_args()
 
 
-async def get_user(client, user_id):
-    """Get spotify.User object"""
-    return await client.get_user(user_id)
-
-
-async def get_all_playlists(user):
-    """Get list of spotify.Playlist objects"""
-    return await user.get_all_playlists()
-
-
 async def main():
     args = parse_arguments()
 
@@ -81,17 +77,22 @@ async def main():
     async with spotify.Client(
         config.get("auth", "id"), config.get("auth", "secret")
     ) as client:
-        user = await get_user(client, args.user)
-        all_playlists = await get_all_playlists(user)
+        user = await client.get_user(args.user)
+        all_playlists = await user.get_all_playlists()
 
         if args.out:
             for playlist in all_playlists:
                 print(playlist.name)
+                if args.tracks:
+                    tracks = await playlist.get_tracks()
+                    for track in tracks:
+                        print(track.name + " - " + track.artist.name)
+                    print("\n")
         else:
             default_output = "playlists-" + args.user + ".out"
             if exists(default_output):
                 print(
-                    f"A list of this user's playlists was already created. Filename: {default_output}"
+                    f"A list of this user's playlists was already created, move it or insert a custom output name. Filename: {default_output}"
                 )
             else:
                 with open(
@@ -100,6 +101,11 @@ async def main():
                 ) as f:
                     for playlist in all_playlists:
                         f.write(playlist.name + "\n")
+                        if args.tracks:
+                            tracks = await playlist.get_tracks()
+                            for track in tracks:
+                                f.write(track.name + " - " + track.artist.name + "\n")
+                            f.write("\n")
 
 
 if __name__ == "__main__":
