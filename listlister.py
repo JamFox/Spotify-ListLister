@@ -80,6 +80,8 @@ async def main():
         user = await client.get_user(args.user)
         all_playlists = await user.get_all_playlists()
 
+        print(f"Everything checks out. Writing list for user {args.user}...\n\n")
+
         if args.out:
             for playlist in all_playlists:
                 print(playlist.name)
@@ -89,14 +91,17 @@ async def main():
                         print(track.name + " - " + track.artist.name)
                     print("\n")
         else:
-            default_output = "playlists-" + args.user + ".out"
+            if config.get("output", "output_filename"): 
+                default_output = config.get("output", "output_filename")
+            else:
+                default_output = "playlists-" + args.user + ".out"
             if exists(default_output):
                 print(
                     f"A list of this user's playlists was already created, move it or insert a custom output name. Filename: {default_output}"
                 )
             else:
                 with open(
-                    config.get("output", "output_filename", fallback=default_output),
+                    default_output,
                     "a",
                 ) as f:
                     for playlist in all_playlists:
