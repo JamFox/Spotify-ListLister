@@ -19,8 +19,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description="List users playlists and write them to file or terminal."
     )
-    optional = parser._action_groups.pop() 
-    required = parser.add_argument_group('required arguments')
+    optional = parser._action_groups.pop()
+    required = parser.add_argument_group("required arguments")
     required.add_argument(
         "-u",
         "--user",
@@ -68,41 +68,39 @@ async def get_all_playlists(user):
     return await user.get_all_playlists()
 
 
-def main():
+async def main():
     args = parse_arguments()
 
     if not exists(args.cfg):
         raise Exception(
-            f"ERROR: configuration file at {args.cfg} does not exist.\n Create a configuration file from template listlister.conf.j2 by removing .j2 suffix OR use argument --cfg <path to config> to your custom path instead."
+            f"ERROR: configuration file at {args.cfg} does not exist.\n Create a configuration file from template listlister.conf.j2 by removing .j2 suffix OR use argument --cfg <path to config> to your custom path instead.\n"
         )
     else:
         config = configparse(args.cfg)
 
-    client = spotify.Client(config.get("auth", "id"), config.get("auth", "secret"))
+    async with spotify.Client(
+        config.get("auth", "id"), config.get("auth", "secret")
+    ) as client:
+        user = await get_user(client, args.user)
+        all_playlists = await get_all_playlists(user)
 
-    loop = asyncio.get_event_loop()
-
-    user = loop.run_until_complete(get_user(client, args.user))
-
-    all_playlists = loop.run_until_complete(get_all_playlists(user))
-
-    if args.out:
-        for playlist in all_playlists:
-            print(playlist.name)
-    else:
-        default_output = "playlists-" + args.user + ".out"
-        if exists(default_output):
-            print(
-                f"A list of this user's playlists was already created. Filename: {default_output}"
-            )
+        if args.out:
+            for playlist in all_playlists:
+                print(playlist.name)
         else:
-            with open(
-                config.get("output", "output_filename", fallback=default_output),
-                "a",
-            ) as f:
-                for playlist in all_playlists:
-                    f.write(playlist.name + "\n")
+            default_output = "playlists-" + args.user + ".out"
+            if exists(default_output):
+                print(
+                    f"A list of this user's playlists was already created. Filename: {default_output}"
+                )
+            else:
+                with open(
+                    config.get("output", "output_filename", fallback=default_output),
+                    "a",
+                ) as f:
+                    for playlist in all_playlists:
+                        f.write(playlist.name + "\n")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
