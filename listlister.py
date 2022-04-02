@@ -46,16 +46,16 @@ def parse_arguments():
         type=str,
     )
     optional.add_argument(
-        "-o",
-        "--out",
+        "-p",
+        "--print",
         action="store_true",
-        help="Output to file instead of terminal if this flag is set.",
+        help="Output to terminal instead of file if this flag is set.",
     )
     optional.add_argument(
-        "-f",
-        "--file",
+        "-o",
+        "--out",
         default=None,
-        dest="file",
+        dest="out",
         action="store",
         help="Path to output file. Defaults to playlists-<USER>.out",
         type=str,
@@ -80,9 +80,9 @@ async def main():
         user = await client.get_user(args.user)
         all_playlists = await user.get_all_playlists()
 
-        print(f"Everything checks out. Writing list for user {args.user}...\n\n")
+        print(f"Everything checks out. Writing list for user {args.user}...\n")
 
-        if args.out:
+        if args.print:
             for playlist in all_playlists:
                 print(playlist.name)
                 if args.tracks:
@@ -91,17 +91,17 @@ async def main():
                         print(track.name + " - " + track.artist.name)
                     print("\n")
         else:
-            if config.get("output", "output_filename"): 
-                default_output = config.get("output", "output_filename")
+            if args.out:
+                output = args.out
             else:
-                default_output = "playlists-" + args.user + ".out"
-            if exists(default_output):
+                output = "playlists-" + args.user + ".out"
+            if exists(output):
                 print(
-                    f"A list of this user's playlists was already created, move it or insert a custom output name. Filename: {default_output}"
+                    f"A list of this user's playlists was already created, move it or insert a custom output name. Filename: {output}"
                 )
             else:
                 with open(
-                    default_output,
+                    output,
                     "a",
                 ) as f:
                     for playlist in all_playlists:

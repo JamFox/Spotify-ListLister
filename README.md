@@ -12,13 +12,11 @@ Discovered a wonderful Spotify account that had over 6k playlists. Only 200 or s
 	OR 
 	- Create your own configuration file and supply the path to it with `-c` or `--cfg`.
 
-Auth configuration is required. Output is optional (that's why it's commented out), defaults to `playlists-<USER>.out`.
+Auth configuration is required:
 ```
 [auth]
 id = <App Client ID>
 secret = <App Client Secret>
-[output]
-#output_filename = <Path and name of file>
 ```
 
 3. Install dependencies:
@@ -33,7 +31,7 @@ Run help:
 
 Which displays how to use the tool:
 ```
-listlister.py [-h] -u USER [-t] [-c CFG] [-o] [-f FILE]
+listlister.py [-h] -u USER [-t] [-c CFG] [-p] [-o OUT]
 
 List users playlists and write them to file or terminal.
 
@@ -44,6 +42,6 @@ optional arguments:
   -h, --help            show this help message and exit
   -t, --tracks          Also list tracks inside the playlists.
   -c CFG, --cfg CFG     Path to configuration file. Defaults to listlister.conf.
-  -o, --out             Output to file instead of terminal if this flag is set.
-  -f FILE, --file FILE  Path to output file. Defaults to playlists-<USER>.out
+  -p, --print           Output to terminal instead of file if this flag is set.
+  -o OUT, --out OUT     Path to output file. Defaults to playlists-<USER>.out
 ```
