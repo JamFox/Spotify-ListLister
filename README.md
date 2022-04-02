@@ -31,10 +31,9 @@ secret = <App Client Secret>
 Run help: 
 `python listlister.py -h`
 
-Which displays:
+Which displays how to use the tool:
 ```
-listlister.py -h
-usage: listlister.py [-h] -u USER [-c CFG] [-o] [-f FILE]
+listlister.py [-h] -u USER [-t] [-c CFG] [-o] [-f FILE]
 
 List users playlists and write them to file or terminal.
 
@@ -43,6 +42,7 @@ required arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -t, --tracks          Also list tracks inside the playlists.
   -c CFG, --cfg CFG     Path to configuration file. Defaults to listlister.conf.
   -o, --out             Output to file instead of terminal if this flag is set.
   -f FILE, --file FILE  Path to output file. Defaults to playlists-<USER>.out
