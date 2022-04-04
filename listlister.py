@@ -77,9 +77,10 @@ async def main():
     async with spotify.Client(
         config.get("auth", "id"), config.get("auth", "secret")
     ) as client:
+        print(f"Got client connection. Getting info about {args.user}...\n")
         user = await client.get_user(args.user)
+        print(f"Got users info. Getting {args.user} playlists...\n")
         all_playlists = await user.get_all_playlists()
-
         print(f"Everything checks out. Writing list for user {args.user}...\n")
 
         if args.print:
