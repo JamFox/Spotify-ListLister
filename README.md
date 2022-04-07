@@ -31,15 +31,16 @@ Run help:
 
 Which displays how to use the tool:
 ```
-listlister.py [-h] -u USER [-t] [-c CFG] [-p] [-o OUT]
+listlister.py [-h] -u USER [-i] [-t] [-c CFG] [-p] [-o OUT]
 
 List users playlists and write them to file or terminal.
 
 required arguments:
   -u USER, --user USER  User ID of whose playlists to list.
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
+  -i, --id              Print playlist IDs instead of names. Works only for file output without tracks flag.
   -t, --tracks          Also list tracks inside the playlists.
   -c CFG, --cfg CFG     Path to configuration file. Defaults to listlister.conf.
   -p, --print           Output to terminal instead of file if this flag is set.
@@ -66,12 +67,15 @@ Run help: `python randomlist.py -h`
 
 Which displays how to use it:
 ```
-randomlist.py [-h] -pl PLAYLISTS
+randomlist.py [-h] -pl PLAYLISTS [-i]
 
 Play a random playlist from a list.
 
-optional arguments:
-  -h, --help            show this help message and exit
+required arguments:
   -pl PLAYLISTS, --playlists PLAYLISTS
                         List where to pick a playlist from.
+
+options:
+  -h, --help            show this help message and exit
+  -i, --id              Set this flag if playlist list is comprised of IDs not names.
 ```

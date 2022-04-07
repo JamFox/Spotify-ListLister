@@ -10,7 +10,9 @@ import linecache
 def parse_arguments():
     """Parse arguments"""
     parser = argparse.ArgumentParser(description="Play a random playlist from a list.")
-    parser.add_argument(
+    optional = parser._action_groups.pop()
+    required = parser.add_argument_group("required arguments")
+    required.add_argument(
         "-pl",
         "--playlists",
         dest="playlists",
@@ -19,6 +21,13 @@ def parse_arguments():
         type=str,
         required=True,
     )
+    optional.add_argument(
+        "-i",
+        "--id",
+        action="store_true",
+        help="Set this flag if playlist list is comprised of IDs not names.",
+    )
+    parser._action_groups.append(optional)
     return parser.parse_args()
 
 
@@ -34,8 +43,12 @@ def main():
             playnumber = randint(0, count)
         playlist = linecache.getline(file, playnumber)
 
-        print(f"Trying to play playlist number {playnumber}: {playlist}")
-        os.system(f"spotify play --playlist {playlist}")
+        if args.id:
+            print(f"Trying to play playlist number {playnumber}, ID: {playlist}")
+            os.system(f"spotify play --uri spotify:playlist:{playlist}")
+        else:
+            print(f"Trying to play playlist number {playnumber}, name: {playlist}")
+            os.system(f"spotify play --playlist {playlist}")
 
 
 if __name__ == "__main__":

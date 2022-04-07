@@ -31,6 +31,12 @@ def parse_arguments():
         required=True,
     )
     optional.add_argument(
+        "-i",
+        "--id",
+        action="store_true",
+        help="Print playlist IDs instead of names. Works only for file output without tracks flag.",
+    )
+    optional.add_argument(
         "-t",
         "--tracks",
         action="store_true",
@@ -106,8 +112,11 @@ async def main():
                     "a",
                 ) as f:
                     for playlist in all_playlists:
-                        f.write(playlist.name + "\n")
-                        if args.tracks:
+                        if args.id:
+                            f.write(playlist.id + "\n")
+                        else:
+                            f.write(playlist.name + "\n")
+                        if not args.id and args.tracks:
                             tracks = await playlist.get_tracks()
                             for track in tracks:
                                 f.write(track.name + " - " + track.artist.name + "\n")
